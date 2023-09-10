@@ -35,4 +35,4 @@ class ToDoUpdate(TodoBase):
     contents: str|None = None
     is_done: bool|None = None
     
-    model_config = ConfigDict(json_schema_extra={"examples": [{"contents": "할 일 내용"}]})
+    model_config = ConfigDict(json_schema_extra={"examples": [{"contents": "할 일 내용", "is_done": False}, {"contents": "할 일 내용"}, {"is_done": True}]})

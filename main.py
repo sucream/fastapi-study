@@ -1,38 +1,15 @@
 from fastapi_study.database import create_all_tables, get_db
-from fastapi_study.schemas.todo import ToDoCreate, ToDoRead
-from fastapi_study.schemas.errors import ErrorMsg
-from fastapi_study.services.todo import get_all_todos, create_new_todo
+from fastapi_study.routers.todo import router as todo_router
 
-from fastapi import FastAPI, Depends
-from sqlalchemy.orm import Session
-
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles  # static 파일 serving을 위한 모듈
 
 create_all_tables()
 app = FastAPI()
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+app.mount("/", StaticFiles(directory="public", html = True), name="static")
 
-@app.get(
-    "/todos",
-    tags=["todo"],
-    response_model=list[ToDoRead],
-    responses={
-        400: {
-            "description": "잘못된 요청",
-            "model": ErrorMsg,
-        },
-    }
-)
-async def get_todos(db: Session=Depends(get_db)):
-    return get_all_todos(db)
 
-@app.post(
-    "/todos",
-    tags=["todo"],
-    response_model=ToDoRead
-)
-async def create_todo(new_todo: ToDoCreate, db: Session=Depends(get_db)):
-    return create_new_todo(new_todo, db)
+# /todos로 시작하는 경로는 todo_router로 처리하도록 위임
+app.include_router(todo_router, prefix="/todos")
