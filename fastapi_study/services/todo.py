@@ -45,7 +45,6 @@ def create_new_todo(
     ToDoModel
         새로 생성된 ToDo
     """
-    
     todo = ToDoModel(**new_todo.model_dump())
     db.add(todo)
     db.commit()
