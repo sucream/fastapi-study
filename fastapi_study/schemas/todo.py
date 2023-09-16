@@ -1,3 +1,4 @@
+import datetime
 from pydantic import BaseModel, Field, ConfigDict
 
 
@@ -13,11 +14,13 @@ class ToDoRead(TodoBase):
     """
     어플리케이션에서 사용할 ToDo 스키마
     """
-    id: int = Field(..., description="고유 id")
+    id: int = Field(..., ge=1, description="고유 id")
+    created_at: datetime.datetime = Field(..., description="생성 시간")
+    updated_at: datetime.datetime = Field(..., description="수정 시간")
     
     # pydantic 2.0 이후로는 Config 클래스를 사용하지 않고 ConfigDict를 사용
     model_config = ConfigDict(from_attributes=True)
-    
+
 
 class ToDoCreate(TodoBase):
     """
