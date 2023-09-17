@@ -35,7 +35,7 @@ class ToDoUpdate(TodoBase):
     """
     ToDo 수정 시 사용할 스키마
     """
-    contents: str|None = None
-    is_done: bool|None = None
+    contents: str|None = Field(None, max_length=256, description="변경할 일 내용")
+    is_done: bool|None = Field(None, description="변경할 완료 여부")
     
     model_config = ConfigDict(json_schema_extra={"examples": [{"contents": "할 일 내용", "is_done": False}, {"contents": "할 일 내용"}, {"is_done": True}]})
