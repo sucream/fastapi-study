@@ -6,7 +6,7 @@ from typing import Annotated
 
 from fastapi_study.database import get_db
 from fastapi_study.schemas.todo import ToDoCreate, ToDoRead, ToDoUpdate
-from fastapi_study.services import todo as todo_service
+from fastapi_study.services.todo import ToDoService
 from fastapi_study.core import exceptions
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -23,9 +23,9 @@ router = APIRouter()
     description="DB에서 모든 ToDo를 조회합니다."
 )
 async def get_todos(
-    db: Annotated[Session, Depends(get_db)]
+    todo_service: Annotated[ToDoService, Depends()]
 ):
-    return todo_service.get_all_todos(db)
+    return todo_service.get_all_todos()
 
 @router.post(
     "",
@@ -37,10 +37,10 @@ async def get_todos(
 )
 async def create_todo(
     new_todo: ToDoCreate,
-    db: Annotated[Session, Depends(get_db)]
+    todo_service: Annotated[ToDoService, Depends()]
 ):
     try:
-        return todo_service.create_new_todo(new_todo, db)
+        return todo_service.create_new_todo(new_todo)
     except exceptions.TodoNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
@@ -53,10 +53,10 @@ async def create_todo(
 )
 async def get_todo(
     todo_id: Annotated[int, Path(..., description="조회할 todo id", ge=1)],
-    db: Annotated[Session, Depends(get_db)]
+    todo_service: Annotated[ToDoService, Depends()]
 ):
     try:
-        return todo_service.get_todo_by_id(todo_id, db)
+        return todo_service.get_todo_by_id(todo_id)
     except exceptions.TodoNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
@@ -69,11 +69,11 @@ async def get_todo(
 )
 async def update_todo(
     todo_id: Annotated[int, Path(..., description="변경할 todo id", ge=1)],
-    update_todo_data: Annotated[ToDoUpdate, Body(..., description="변경할 todo 데이터", example={"contents": "새로운 할 일 내용", "is_done": True})],
-    db: Annotated[Session, Depends(get_db)]
+    update_todo_data: Annotated[ToDoUpdate, Body(..., description="변경할 todo 데이터", examples=[{"contents": "새로운 할 일 내용", "is_done": True}])],
+    todo_service: Annotated[ToDoService, Depends()]
 ):
     try:
-        return todo_service.update_todo(todo_id, update_todo_data, db)
+        return todo_service.update_todo(todo_id, update_todo_data)
     except exceptions.TodoNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except Exception as e:
@@ -86,10 +86,10 @@ async def update_todo(
 )
 async def delete_todo(
     todo_id: Annotated[int, Path(..., description="삭제할 todo id", ge=1)],
-    db: Annotated[Session, Depends(get_db)]
+    todo_service: Annotated[ToDoService, Depends()]
 ):
     try:
-        todo_service.delete_todo_by_id(todo_id, db)
+        todo_service.delete_todo_by_id(todo_id)
     except exceptions.TodoNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except Exception as e:

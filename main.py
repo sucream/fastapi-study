@@ -9,6 +9,7 @@ app = FastAPI(
     title="FastAPI Study",
     description="FastAPI Study를 위한 API 서버입니다.",
     version="0.1.0",
+    redoc_url=None,
 )
 
 # /todos로 시작하는 경로는 todo_router로 처리하도록 위임

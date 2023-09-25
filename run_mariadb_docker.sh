@@ -1,0 +1,1 @@
+docker run --detach --name fastapi-mariadb -p 3306:3306 --env MARIADB_ROOT_PASSWORD=root  mariadb:latest

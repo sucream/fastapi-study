@@ -5,12 +5,16 @@ from sqlalchemy.orm import sessionmaker
 
 
 # 메모리로만 사용
-DB_URL = "sqlite:///:memory:"
+MEMORY_DB_URL = "sqlite:///:memory:"
+# MARIADB_URL = "mysql+pymysql://root:root@localhost:3306/todo?charset=utf8mb4"
 
-engine = create_engine(DB_URL, connect_args={"check_same_thread": False})
+engine = create_engine(MEMORY_DB_URL, connect_args={"check_same_thread": False})
+# engine = create_engine(MARIADB_URL)
+test_engine = create_engine(MEMORY_DB_URL, connect_args={"check_same_thread": False})
+# test_engine = create_engine(MARIADB_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
+TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
 def get_db():
     """
